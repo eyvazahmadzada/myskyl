@@ -1,0 +1,288 @@
+:root {
+    --primary: #50759F;
+}
+
+body {
+    font-family: 'Titillium Web', sans-serif;
+    min-width: 320px;
+}
+
+main {
+    min-height: 100vh;
+    padding: 3rem 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+    text-align: center;
+}
+
+.nav-item {
+    font-weight: bold;
+    margin: 0 0.75rem;
+}
+
+.nav-link {
+    color: black !important;
+}
+
+.nav-link:hover {
+    color: #666666 !important;
+    transition: 0.5s;
+}
+
+.nav-item.active .nav-link {
+    color: var(--primary) !important;
+}
+
+.logo {
+    width: 110px;
+}
+
+.fa {
+    margin-right: 3px;
+}
+
+.header {
+    margin-bottom: 1rem;
+}
+
+h3,
+h1,
+h4 {
+    font-weight: bold;
+}
+
+.header>p {
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+.btn-col {
+    margin-bottom: 1.2rem;
+}
+
+.category-btn {
+    font-weight: bold;
+    padding: 0.4rem 4rem;
+    color: var(--primary);
+    background-color: white;
+    text-decoration: none !important;
+    border: 1px solid var(--primary);
+    border-radius: 7px;
+}
+
+.category-btn.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.category-btn:not(.active):hover {
+    color: #7390B2;
+    transition: 0.5s;
+}
+
+.custom-btn {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.4rem 3.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 7px;
+}
+
+
+.custom-btn:hover {
+    background-color: #405D7F;
+    transition: 0.5s;
+}
+
+.custom-btn:focus {
+    outline: none;
+}
+
+.form-control::placeholder,
+.custom-select {
+    font-style: italic;
+}
+
+.form-control:focus,
+.custom-select:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary);
+}
+
+.form-group>label {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.custom-select {
+    margin-bottom: 1rem;
+}
+
+.form-data {
+    margin-bottom: 1rem;
+}
+
+nav {
+    padding: 0.25rem 0.5rem !important;
+}
+
+.navbar-toggler {
+    border: none;
+    outline: none !important;
+}
+
+.navbar-toggler-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.loader,
+.loader:after {
+    border-radius: 50%;
+    width: 10em;
+    height: 10em;
+}
+
+.loader {
+    margin: 60px auto;
+    font-size: 10px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-left: 1.1em solid #ffffff;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+}
+
+@-webkit-keyframes load8 {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes load8 {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+
+@media only screen and (max-width: 992px) {
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    h3 {
+        font-size: 1.6rem;
+    }
+
+    h4 {
+        font-size: 1.4rem;
+    }
+
+    .category-btn,
+    .custom-btn {
+        font-size: 0.975rem;
+    }
+
+    .header>p {
+        font-size: 1.05rem;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.3rem;
+    }
+
+    .category-btn,
+    .custom-btn {
+        font-size: 0.95rem;
+    }
+
+    .header>p {
+        font-size: 1rem;
+    }
+
+    .nav-item {
+        text-align: center;
+    }
+
+    .form-control::placeholder,
+    .custom-select {
+        font-size: 0.975rem;
+    }
+
+    .custom-select,
+    .form-group {
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.4rem;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+    }
+
+    .category-btn {
+        font-size: 0.925rem;
+        padding: 0.4rem 6rem;
+        margin: 1rem auto;
+    }
+
+    .custom-btn {
+        font-size: 0.925rem;
+        padding: 0.4rem 2.5rem;
+    }
+
+    .header>p {
+        font-size: 0.94rem;
+    }
+
+    .form-control::placeholder,
+    .custom-select {
+        font-size: 0.95rem;
+    }
+}

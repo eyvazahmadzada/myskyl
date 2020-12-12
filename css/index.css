@@ -1,0 +1,53 @@
+main {
+    background-image: url('../assets/index.jpg');
+}
+
+.weather-card {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 1.5rem 0.25rem;
+    margin: 0.5rem auto;
+    cursor: pointer;
+}
+
+.degree,
+.condition {
+    font-weight: bold;
+}
+
+.degree {
+    margin-top: 0.2rem;
+    margin-bottom: 0;
+}
+
+.condition {
+    font-size: 1.2rem;
+    display: block;
+}
+
+.details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.weather-icon {
+    font-size: 4rem;
+}
+
+.part-1>span,
+.part-2>span {
+    display: block;
+    font-size: 0.9rem;
+}
+
+.date {
+    font-style: italic;
+}
+
+@media only screen and (max-width: 576px) {
+    .details {
+        flex-direction: row;
+    }
+}

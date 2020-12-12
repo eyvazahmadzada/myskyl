@@ -1,0 +1,16 @@
+main {
+    background-image: url('../assets/statistics.jpg');
+}
+
+.data-per-header {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+
+@media only screen and (max-width: 576px) {
+    .data-per-header {
+        font-size: 1rem;
+    }
+
+}

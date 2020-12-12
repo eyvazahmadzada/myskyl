@@ -1,0 +1,143 @@
+:root {
+    --primary: #50759F;
+}
+
+
+main {
+    background-image: url('../assets/details.jpg');
+    padding: 0;
+}
+
+section {
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.weather {
+    margin-top: 2rem;
+}
+
+.temperature {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fa {
+    font-size: 1.5rem;
+}
+
+.weather-icon {
+    font-size: 6rem;
+}
+
+.fa-calendar {
+    margin-right: 8px;
+    font-size: 3rem;
+}
+
+.degree,
+.condition {
+    font-weight: bold;
+}
+
+.degree {
+    margin-top: 0.2rem;
+    margin-bottom: 0;
+}
+
+.condition {
+    font-size: 1.4rem;
+    display: block;
+}
+
+.part-1>span,
+.part-2>span {
+    display: block;
+    font-size: 1.1rem;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.details {
+    display: flex;
+    justify-content: space-around;
+}
+
+.about {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.btns {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.delete-btn {
+    background-color: #BF2929;
+}
+
+.delete-btn:hover {
+    background-color: #982020 !important;
+    transition: 0.5s;
+}
+
+@media only screen and (max-width: 992px) {
+    .weather-icon {
+        font-size: 5.5rem;
+    }
+
+    .fa-calendar {
+        font-size: 2.5rem;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .info {
+        margin-top: 1.5rem;
+    }
+
+    .weather-icon {
+        font-size: 5rem;
+    }
+
+    .fa-calendar {
+        font-size: 2.25rem;
+    }
+
+}
+
+
+@media only screen and (max-width: 576px) {
+    .fa {
+        font-size: 1.2rem;
+    }
+
+    .fa-calendar {
+        font-size: 2rem;
+    }
+
+    .about {
+        font-size: 1rem;
+    }
+
+    .part-1>span,
+    .part-2>span {
+        display: block;
+        font-size: 1.05rem;
+    }
+
+    .details {
+        flex-direction: column;
+    }
+
+}
