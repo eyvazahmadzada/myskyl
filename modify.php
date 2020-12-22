@@ -1,13 +1,5 @@
 <?php
-$servername = "mysql-eyvazahmadzada12.alwaysdata.net";
-$username = "190166";
-$password = "e3665097";
-$dbname = "eyvazahmadzada12_weather";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_connection.php';
 
 $id = $_GET["id"];
 
@@ -36,26 +28,28 @@ if (array_key_exists('modify-row', $_POST) && isset($_POST["temperature"])
     $fog = $_POST["fog"];
 
     $sqlModify = "UPDATE quantitative_data SET
-            quantitative_data.temprature_celsius = $temperature,
-            quantitative_data.humidity_percent = $humidity_percent,
-            quantitative_data.air_pressure = $airpressure,
-            quantitative_data.precipitation_percent = $precipitation,
-            quantitative_data.visibility = $visibility_km,
-            quantitative_data.cloud_cover_percent = $cloudcover,
-            quantitative_data.record_date = '" . date('Y-m-d') . "',
-            quantitative_data.record_time = '" . date('h:i:s') . "',
-            quantitative_data.weather_condition_id = $weather_condition,
-            quantitative_data.humidity_id = $humidity,
-            quantitative_data.wind_id = $wind,
-            quantitative_data.visibility_id = $visibility,
-            quantitative_data.fog_id = $fog WHERE
-            quantitative_data.record_id = $id;";
+            quantitative_data.temprature_celsius = ?,
+            quantitative_data.humidity_percent = ?,
+            quantitative_data.air_pressure = ?,
+            quantitative_data.precipitation_percent = ?,
+            quantitative_data.visibility = ?,
+            quantitative_data.cloud_cover_percent = ?,
+            quantitative_data.weather_condition_id = ?,
+            quantitative_data.humidity_id = ?,
+            quantitative_data.wind_id = ?,
+            quantitative_data.visibility_id = ?,
+            quantitative_data.fog_id = ? WHERE
+            quantitative_data.record_id = ?;";
 
-    $result = $conn->query($sqlModify);
-
-    if ($result) {
-        header("Location: /myskyl/details.php?id=$id");
+    $stmt = $conn->prepare($sqlModify);
+    if ($stmt) {
+        $stmt->bind_param("ddddddiiiiii", $temperature, $humidity_percent, $airpressure,
+            $precipitation, $visibility_km, $cloudcover, $weather_condition, $humidity, $wind,
+            $visibility, $fog, $id);
+        $stmt->execute();
     }
+    $result = $stmt->get_result();
+    header("Location: /myskyl/details.php?id=$id");
 
 } else {
     $sql = "SELECT record_id, weather_condition_id, humidity_id,
@@ -63,13 +57,19 @@ if (array_key_exists('modify-row', $_POST) && isset($_POST["temperature"])
      temprature_celsius, humidity_percent, air_pressure, precipitation_percent,
      visibility AS visibility_km, cloud_cover_percent, record_date
      FROM quantitative_data
-     WHERE record_id = $id";
-    $result = $conn->query($sql);
+     WHERE record_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+    }
+    $result = $stmt->get_result();
+
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
     }
 }
-
 $conn->close();
 ?>
 
@@ -84,6 +84,7 @@ $conn->close();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" href="assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/add_data.css">
     <title>MySKYL | Modify</title>
@@ -119,37 +120,37 @@ $conn->close();
             <div class="col-lg-9 col-md-10 col-11">
                 <form action="" method="post">
                     <div class="form-data">
-                        <h4 class="section-header">Quantitative values</h4>
+                        <h4 class="section-header animate__animated animate__fadeInLeft">Quantitative values</h4>
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <label for="temperature">Temperature in celsius</label>
                                     <input type="text" class="form-control" name="temperature" id="temperature"
                                         value="<?php echo $row["temprature_celsius"] ?>">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <label for="airpressure">Air pressure in hPa</label>
                                     <input type="text" class="form-control" name="airpressure" id="airpressure"
                                         value="<?php echo $row["air_pressure"] ?>">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <label for="visibility_km">Visibility in km</label>
                                     <input type="text" class="form-control" name="visibility_km" id="visibility_km"
                                         value="<?php echo $row["visibility_km"] ?>">
                                 </div>
                             </div>
                             <div class=" col-sm-6">
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <label for="humidity_percent">Humidity percentage</label>
                                     <input type="text" class="form-control" name="humidity_percent"
                                         id="humidity_percent" value="<?php echo $row["humidity_percent"] ?>">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <label for="precipitation">Precipitation percentage</label>
                                     <input type="text" class="form-control" name="precipitation" id="precipitation"
                                         value="<?php echo $row["precipitation_percent"] ?>">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <label for="cloudcover">Cloud cover percentage</label>
                                     <input type="text" class="form-control" name="cloudcover" id="cloudcover"
                                         value="<?php echo $row["cloud_cover_percent"] ?>">
@@ -157,10 +158,11 @@ $conn->close();
                             </div>
                         </div>
 
-                        <h4 class="section-header">Qualitative values</h4>
+                        <h4 class="section-header animate__animated animate__fadeInLeft">Qualitative values</h4>
                         <div class="row justify-content-center">
                             <div class="col-sm-6">
-                                <select name="weather-condition" class="custom-select">
+                                <select name="weather-condition"
+                                    class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How is the weather?</option>
                                     <option <?php echo $row["weather_condition_id"] == "1" ? "selected" : "" ?>
                                         value="1">
@@ -178,7 +180,7 @@ $conn->close();
                                         value="5">
                                         Chilly</option>
                                 </select>
-                                <select name="humidity" class="custom-select">
+                                <select name="humidity" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How humid the weather is?</option>
                                     <option <?php echo $row["humidity_id"] == "1" ? "selected" : "" ?> value="1">Wet
                                     </option>
@@ -193,7 +195,7 @@ $conn->close();
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select name="wind" class="custom-select">
+                                <select name="wind" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How windy the weather is?</option>
                                     <option <?php echo $row["wind_id"] == "1" ? "selected" : "" ?> value="1">Windy
                                     </option>
@@ -206,7 +208,7 @@ $conn->close();
                                     <option <?php echo $row["wind_id"] == "5" ? "selected" : "" ?> value="5">Blowy
                                     </option>
                                 </select>
-                                <select name="visibility" class="custom-select">
+                                <select name="visibility" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How visible the weather is?</option>
                                     <option <?php echo $row["visibility_id"] == "1" ? "selected" : "" ?> value="1">Clear
                                     </option>
@@ -222,7 +224,7 @@ $conn->close();
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select name="fog" class="custom-select">
+                                <select name="fog" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How foggy the weather is?</option>
                                     <option <?php echo $row["fog_id"] == "1" ? "selected" : "" ?> value="1">
                                         Hazy
@@ -243,7 +245,8 @@ $conn->close();
                             </div>
                         </div>
                     </div>
-                    <button class="custom-btn" name="modify-row" type="submit">Modify</button>
+                    <button class="custom-btn animate__animated animate__fadeInLeft" name="modify-row"
+                        type="submit">Modify</button>
                 </form>
             </div>
         </section>
@@ -255,6 +258,15 @@ $conn->close();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formAnimations = document.querySelectorAll(".animate__fadeInLeft");
+        formAnimations.forEach(function(item, index) {
+            item.style.animationDelay = (index / 10) + 's';
+            item.style.animationDuration = '0.25s';
+        });
+    });
     </script>
 </body>
 

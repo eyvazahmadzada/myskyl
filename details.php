@@ -1,22 +1,17 @@
 <?php
-$servername = "mysql-eyvazahmadzada12.alwaysdata.net";
-$username = "190166";
-$password = "e3665097";
-$dbname = "eyvazahmadzada12_weather";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_connection.php';
 
 $id = $_GET["id"];
 
 if (array_key_exists('delete-row', $_POST)) {
-    $sqlDelete = "DELETE from quantitative_data WHERE record_id = $id";
-    $result = $conn->query($sqlDelete);
-    if ($result) {
-        header("Location: /myskyl/index.php?year=2018");
+    $sqlDelete = "DELETE from quantitative_data WHERE record_id = ?";
+    $stmt = $conn->prepare($sqlDelete);
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
     }
+    $result = $stmt->get_result();
+    header("Location: /myskyl/index.php?year=2018");
 } else {
     $sql = "SELECT record_id, qualitative_data_1.weather_condition,
     qualitative_data_2.humidity, qualitative_data_3.wind, qualitative_data_4.visibility,
@@ -28,9 +23,15 @@ if (array_key_exists('delete-row', $_POST)) {
     INNER JOIN qualitative_data_3 ON quantitative_data.wind_id = qualitative_data_3.wind_id
     INNER JOIN qualitative_data_4 ON quantitative_data.visibility_id = qualitative_data_4.visibility_id
     INNER JOIN qualitative_data_5 ON quantitative_data.fog_id = qualitative_data_5.fog_id
-    WHERE record_id = $id";
+    WHERE record_id = ?";
 
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+    }
+    $result = $stmt->get_result();
+
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
     }
@@ -73,6 +74,7 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     <link rel="shortcut icon" href="assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/details.css">
     <title>MySKYL | Details</title>
@@ -104,7 +106,7 @@ $conn->close();
     </header>
 
     <main class="container-fluid">
-        <section class="row text-align flex-column">
+        <section class="row text-align flex-column animate__animated animate__fadeInLeft">
             <h1><i class="fa fa-calendar"
                     aria-hidden="true"></i><?php echo date_format(date_create($row["record_date"]), "F j, Y") ?>
             </h1>

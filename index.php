@@ -1,13 +1,5 @@
 <?php
-$servername = "mysql-eyvazahmadzada12.alwaysdata.net";
-$username = "190166";
-$password = "e3665097";
-$dbname = "eyvazahmadzada12_weather";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_connection.php';
 
 $isLoading = true;
 if (isset($_GET["year"])) {
@@ -22,8 +14,14 @@ if (isset($_GET["year"])) {
         INNER JOIN qualitative_data_3 ON quantitative_data.wind_id = qualitative_data_3.wind_id
         INNER JOIN qualitative_data_4 ON quantitative_data.visibility_id = qualitative_data_4.visibility_id
         INNER JOIN qualitative_data_5 ON quantitative_data.fog_id = qualitative_data_5.fog_id
-        WHERE YEAR(record_date) = $currentYear";
-    $result = $conn->query($sql);
+        WHERE YEAR(record_date) = ?";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $currentYear);
+        $stmt->execute();
+    }
+    $result = $stmt->get_result();
     $isLoading = false;
 
     $conn->close();
@@ -42,6 +40,7 @@ if (isset($_GET["year"])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     <link rel="shortcut icon" href="assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/index.css">
     <title>MySKYL | Home</title>
@@ -73,7 +72,11 @@ if (isset($_GET["year"])) {
     </header>
 
     <main class="container-fluid">
-        <section class="row justify-content-center">
+
+        <?php
+if (!$isLoading && $result->num_rows > 0) {
+    echo
+        '<section class="row justify-content-center' . (!$isLoading ? ' animate__animated animate__bounceInDown' : '') . '">
             <div class="header col-md-12 col-11">
                 <h3>WEATHER RECORDS</h3>
                 <p>“There is no such thing as bad weather, only different kinds of good weather” - John Ruskin
@@ -84,25 +87,21 @@ if (isset($_GET["year"])) {
             <div class="col-lg-7 col-md-9">
                 <div class="row">
                     <div class="col-sm-4 btn-col">
-                        <a class="category-btn <?php if ($_GET["year"] == 2018) {echo "active";}?>"
-                            href="index.php?year=2018">2018</a>
-                    </div>
-                    <div class="col-sm-4 btn-col">
-                        <a class="category-btn <?php if ($_GET["year"] == 2019) {echo "active";}?>"
-                            href="index.php?year=2019">2019</a>
-                    </div>
-                    <div class="col-sm-4 btn-col">
-                        <a class="category-btn <?php if ($_GET["year"] == 2020) {echo "active";}?>"
-                            href="index.php?year=2020">2020</a>
-                    </div>
-                </div>
+                        <a class="category-btn ' . ($_GET["year"] == 2018 ? "active" : "") . '"
+                href="index.php?year=2018">2018</a>
+            </div>
+            <div class="col-sm-4 btn-col">
+                <a class="category-btn ' . ($_GET["year"] == 2019 ? "active" : "") . '"
+                    href="index.php?year=2019">2019</a>
+            </div>
+            <div class="col-sm-4 btn-col">
+                <a class="category-btn ' . ($_GET["year"] == 2020 ? "active" : "") . '"
+                    href="index.php?year=2020">2020</a>
             </div>
         </section>
         <section class="row justify-content-center">
             <div class="col-11">
-                <div class="row justify-content-center align-items-center">
-                    <?php
-if (!$isLoading && $result->num_rows > 0) {
+                <div class="row justify-content-center align-items-center">';
     while ($row = $result->fetch_assoc()) {
         $weather_icon;
         switch ($row["weather_condition"]) {
@@ -125,33 +124,31 @@ if (!$isLoading && $result->num_rows > 0) {
                 $weather_icon = "wi-day-cloudy";
         }
         echo '<div class="col-lg-4 col-md-6" onclick="goToDetails(' . $row["record_id"] . ')">
-                            <div class="weather-card">
-                                <i class="wi ' . $weather_icon . ' weather-icon" aria-hidden="true"></i>
-                                <h2 class="degree">' . $row["temprature_celsius"] . '°</h2>
-                                <span class="condition">' . ucfirst($row["weather_condition"]) . '</span>
-                                <div class="details">
-                                    <div class="part-1">
-                                        <span><i class="fa fa-tint" aria-hidden="true"></i>Humidity: ' . $row["humidity_percent"] . '%</span>
-                                        <span><i class="fa fa-tachometer" aria-hidden="true"></i>Pressure: ' . $row["air_pressure"] . ' hPa</span>
-                                    </div>
-                                    <div class="part-2">
-                                        <span><i class="fa fa-cloud" aria-hidden="true"></i>Precipitation: ' . $row["precipitation_percent"] . '%</span>
-                                        <span><i class="fa fa-eye" aria-hidden="true"></i>Visibility: ' . $row["visibility_km"] . ' km</span>
-                                    </div>
-                                </div>
-                                <span class="date">' . date_format(date_create($row["record_date"]), "F j, Y") . ' </span>
-                            </div>
-                        </div>';
+                <div class="weather-card animate__animated animate__fadeInLeft animate__faster">
+                    <i class="wi ' . $weather_icon . ' weather-icon" aria-hidden="true"></i>
+                    <h2 class="degree">' . $row["temprature_celsius"] . '°</h2>
+                    <span class="condition">' . ucfirst($row["weather_condition"]) . '</span>
+                    <div class="details">
+                        <div class="part-1">
+                            <span><i class="fa fa-tint" aria-hidden="true"></i>Humidity: ' . $row["humidity_percent"] . '%</span>
+                            <span><i class="fa fa-tachometer" aria-hidden="true"></i>Pressure: ' . $row["air_pressure"] . ' hPa</span>
+                        </div>
+                        <div class="part-2">
+                            <span><i class="fa fa-cloud" aria-hidden="true"></i>Precipitation: ' . $row["precipitation_percent"] . '%</span>
+                            <span><i class="fa fa-eye" aria-hidden="true"></i>Visibility: ' . $row["visibility_km"] . ' km</span>
+                        </div>
+                    </div>
+                    <span class="date">' . date_format(date_create($row["record_date"]), "F j, Y") . ' </span>
+                </div>
+            </div>';
     }
-
+    echo '</div></div></section>';
 } else {
-    echo '<div class="loader"></div>';
+    echo '<section class="loader-wrapper">
+        <div class="loader"></div>
+    </section>';
 }
 ?>
-
-                </div>
-            </div>
-        </section>
     </main>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
@@ -169,6 +166,10 @@ if (!$isLoading && $result->num_rows > 0) {
             aTag.click();
             aTag.remove();
         }
+        const cardAnimations = document.querySelectorAll(".animate__fadeInLeft");
+        cardAnimations.forEach(function(item, index) {
+            item.style.animationDelay = (index / 5) + 's';
+        });
     });
 
     function goToDetails(id) {

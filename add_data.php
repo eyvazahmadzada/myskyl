@@ -1,13 +1,5 @@
 <?php
-$servername = "mysql-eyvazahmadzada12.alwaysdata.net";
-$username = "190166";
-$password = "e3665097";
-$dbname = "eyvazahmadzada12_weather";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_connection.php';
 
 if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
     && isset($_POST["airpressure"])
@@ -32,20 +24,24 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
     $wind = $_POST["wind"];
     $visibility = $_POST["visibility"];
     $fog = $_POST["fog"];
+    $record_date = date('Y-m-d');
+    $record_time = date('h:i:s');
 
     $sql = "INSERT INTO quantitative_data (record_id, temprature_celsius,
     humidity_percent, air_pressure, precipitation_percent, visibility,
     cloud_cover_percent, record_date, record_time, wind_speed, fog_id,
     wind_id, visibility_id, humidity_id, weather_condition_id)
-    VALUES (NULL, $temperature, $humidity_percent, $airpressure, $precipitation,
-    $visibility_km, $cloudcover, '" . date('Y-m-d') . "', '" . date('h:i:s') . "',
-    10, $fog, $wind, $visibility, $humidity, $weather_condition)";
+    VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, 10, ?, ?, ?, ?, ?)";
 
-    $result = $conn->query($sql);
-
-    if ($result) {
-        header("Location: /myskyl/index.php?year=2020");
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("ddddddssiiiii", $temperature, $humidity_percent, $airpressure,
+            $precipitation, $visibility_km, $cloudcover, $record_date, $record_time,
+            $fog, $wind, $visibility, $humidity, $weather_condition);
+        $stmt->execute();
     }
+    $result = $stmt->get_result();
+    header("Location: /myskyl/index.php?year=2020");
 
 }
 ?>
@@ -61,6 +57,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" href="assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/add_data.css">
     <title>MySKYL | Add Data</title>
@@ -92,7 +89,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
     </header>
 
     <main class="container-fluid">
-        <section class="row justify-content-center">
+        <section class="row justify-content-center animate__animated animate__bounceInDown">
             <div class="header col-md-12 col-11">
                 <h3>ADD A NEW RECORD</h3>
                 <p>“In the end, all it takes is one small action, by one person. One at a time” - Susan Cooper
@@ -103,42 +100,45 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
             <div class="col-lg-9 col-md-10 col-11">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <div class="form-data">
-                        <h4 class="section-header">Quantitative values</h4>
+                        <h4 class="section-header animate__animated animate__fadeInLeft">Quantitative
+                            values</h4>
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="temperature"
                                         placeholder="Temperature in celsius">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="airpressure"
                                         placeholder="Air pressure in hPa">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="visibility_km"
                                         placeholder="Visibility percentage">
                                 </div>
                             </div>
                             <div class="col-sm-6">
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="humidity_percent"
                                         placeholder="Humidity percentage">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="precipitation"
                                         placeholder="Precipitation percentage">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="cloudcover"
                                         placeholder="Cloud cover percentage">
                                 </div>
                             </div>
                         </div>
 
-                        <h4 class="section-header">Qualitative values</h4>
+                        <h4 class="section-header animate__animated animate__fadeInLeft">Qualitative
+                            values</h4>
                         <div class="row justify-content-center">
                             <div class="col-sm-6">
-                                <select name="weather-condition" class="custom-select">
+                                <select name="weather-condition"
+                                    class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How is the weather?</option>
                                     <option value="1">Cold</option>
                                     <option value="2">Mild</option>
@@ -146,7 +146,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                     <option value="4">Sunny</option>
                                     <option value="5">Chilly</option>
                                 </select>
-                                <select name="humidity" class="custom-select">
+                                <select name="humidity" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How humid the weather is?</option>
                                     <option value="1">Wet</option>
                                     <option value="2">Dry</option>
@@ -156,7 +156,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select name="wind" class="custom-select">
+                                <select name="wind" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How windy the weather is?</option>
                                     <option value="1">Windy</option>
                                     <option value="2">Breezy</option>
@@ -164,7 +164,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                     <option value="4">Gusty</option>
                                     <option value="5">Blowy</option>
                                 </select>
-                                <select name="visibility" class="custom-select">
+                                <select name="visibility" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How visible the weather is?</option>
                                     <option value="1">Clear</option>
                                     <option value="2">Conspicuous</option>
@@ -174,7 +174,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select name="fog" class="custom-select">
+                                <select name="fog" class="custom-select animate__animated animate__fadeInLeft">
                                     <option>How foggy the weather is?</option>
                                     <option value="1">Hazy</option>
                                     <option value="2">Misty</option>
@@ -185,7 +185,8 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                             </div>
                         </div>
                     </div>
-                    <button class="custom-btn" type="submit" name="add-row">Add</button>
+                    <button class="custom-btn animate__animated animate__fadeInLeft" type="submit"
+                        name="add-row">Add</button>
                 </form>
             </div>
         </section>
@@ -198,12 +199,15 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formAnimations = document.querySelectorAll(".animate__fadeInLeft");
+        formAnimations.forEach(function(item, index) {
+            item.style.animationDelay = (index / 10) + 's';
+            item.style.animationDuration = '0.25s';
+        });
+    });
+    </script>
 </body>
 
 </html>
-
-<?php
-// if (isset($_POST['temp'])) {
-//     echo $_POST['temp'];
-// }
-?>

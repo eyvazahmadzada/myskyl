@@ -1,19 +1,13 @@
 <?php
-$servername = "mysql-eyvazahmadzada12.alwaysdata.net";
-$username = "190166";
-$password = "e3665097";
-$dbname = "eyvazahmadzada12_weather";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_connection.php';
 
 $isLoading = true;
-$currentMonth = 1;
-if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
+$currentQuarter = 1;
+if (isset($_GET["year"])) {
     $currentYear = $_GET["year"];
-    $currentMonth = $_POST['month'];
+    if (isset($_POST['quarter'])) {
+        $currentQuarter = $_POST['quarter'];
+    }
     $sql = "SELECT record_id, qualitative_data_1.weather_condition, qualitative_data_2.humidity,
         qualitative_data_3.wind, qualitative_data_4.visibility, qualitative_data_5.fog,
         temprature_celsius, humidity_percent, air_pressure, precipitation_percent,
@@ -24,8 +18,15 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
         INNER JOIN qualitative_data_3 ON quantitative_data.wind_id = qualitative_data_3.wind_id
         INNER JOIN qualitative_data_4 ON quantitative_data.visibility_id = qualitative_data_4.visibility_id
         INNER JOIN qualitative_data_5 ON quantitative_data.fog_id = qualitative_data_5.fog_id
-        WHERE YEAR(record_date) = $currentYear AND MONTH(record_date) = $currentMonth";
-    $result = $conn->query($sql);
+        WHERE YEAR(record_date) = ? AND QUARTER(record_date) = ?
+        ORDER BY record_date";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("ii", $currentYear, $currentQuarter);
+        $stmt->execute();
+    }
+    $result = $stmt->get_result();
     $isLoading = false;
 
     $conn->close();
@@ -43,6 +44,7 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="shortcut icon" href="assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/statistics.css">
     <title>MySKYL | Statistics</title>
@@ -74,7 +76,9 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
     </header>
 
     <main class="container-fluid">
-        <section class="row justify-content-center">
+        <?php
+if (!$isLoading) {
+    echo '<section class="row justify-content-center' . (!$isLoading ? ' animate__animated animate__bounceInDown' : '') . '">
             <div class="header col-12">
                 <h3>ANALYSIS OF THE WEATHER RECORDS</h3>
                 <p>“A change in the weather is sufficient to recreate the world and ourselves” - Marcel Proust
@@ -86,71 +90,61 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
             <div class="col-lg-7 col-md-9">
                 <div class="row">
                     <div class="col-sm-4 btn-col">
-                        <a class="category-btn <?php if ($_GET["year"] == 2018) {echo "active";}?>"
-                            href="statistics.php?year=2018">2018</a>
+                        <a class="category-btn ' . ($_GET["year"] == 2018 ? "active" : "") . '"
+                    href="statistics.php?year=2018">2018</a>
                     </div>
                     <div class="col-sm-4 btn-col">
-                        <a class="category-btn <?php if ($_GET["year"] == 2019) {echo "active";}?>"
-                            href="statistics.php?year=2019">2019</a>
+                        <a class="category-btn ' . ($_GET["year"] == 2019 ? "active" : "") . '"
+                    href="statistics.php?year=2019">2019</a>
                     </div>
                     <div class="col-sm-4 btn-col">
-                        <a class="category-btn <?php if ($_GET["year"] == 2020) {echo "active";}?>"
-                            href="statistics.php?year=2020">2020</a>
+                        <a class="category-btn ' . ($_GET["year"] == 2020 ? "active" : "") . '"
+                    href="statistics.php?year=2020">2020</a>
                     </div>
                 </div>
             </div>
-        </section>
-        <section class="row justify-content-center mb-4">
-            <div class="col-lg-4 col-sm-6 col-9">
-                <span class="data-per-header">DISPLAY DATA FOR</span>
-                <form action="" method="POST">
-                    <select name="month" class="custom-select">
-                        <option <?php echo $currentMonth == 1 ? "selected" : "" ?> value="1">January</option>
-                        <option <?php echo $currentMonth == 2 ? "selected" : "" ?> value="2">February</option>
-                        <option <?php echo $currentMonth == 3 ? "selected" : "" ?> value="3">March</option>
-                        <option <?php echo $currentMonth == 4 ? "selected" : "" ?> value="4">Avril</option>
-                        <option <?php echo $currentMonth == 5 ? "selected" : "" ?> value="5">May</option>
-                        <option <?php echo $currentMonth == 6 ? "selected" : "" ?> value="6">June</option>
-                        <option <?php echo $currentMonth == 7 ? "selected" : "" ?> value="7">July</option>
-                        <option <?php echo $currentMonth == 8 ? "selected" : "" ?> value="8">August</option>
-                        <option <?php echo $currentMonth == 9 ? "selected" : "" ?> value="9">September</option>
-                        <option <?php echo $currentMonth == 10 ? "selected" : "" ?> value="10">October</option>
-                        <option <?php echo $currentMonth == 11 ? "selected" : "" ?> value="11">November</option>
-                        <option <?php echo $currentMonth == 12 ? "selected" : "" ?> value="12">December</option>
-                    </select>
-                    <button class="custom-btn" name="show" type="submit">Show</button>
-                </form>
-            </div>
-        </section>
-        <section>
-            <div class="row">
-                <div class="col-lg-6">
-                    <canvas class="temperature-chart"></canvas>
+        </section>';
+    echo "<section class='row justify-content-center mb-4'>
+                <div class='col-lg-4 col-sm-6 col-9'>
+                    <span class='data-per-header'>DISPLAY DATA FOR</span>
+                    <form action='' method='POST'>
+                        <select name='quarter' class='custom-select'>
+                            <option " . ($currentQuarter == 1 ? 'selected' : '') . " value='1'>First quarter</option>
+                            <option " . ($currentQuarter == 2 ? 'selected' : '') . " value='2'>Second quarter</option>
+                            <option " . ($currentQuarter == 3 ? 'selected' : '') . " value='3'>Third quarter</option>
+                            <option " . ($currentQuarter == 4 ? 'selected' : '') . " value='4'>Fourth quarter</option>
+                        </select>
+                        <button class='custom-btn' name='show' type='submit'>Show</button>
+                    </form>
                 </div>
-                <div class="col-lg-6">
-                    <canvas class="humidity-chart"></canvas>
+            </section>
+            <section>
+                <div class='row'>
+                    <div class='col-lg-6'>
+                        <canvas class='temperature-chart'></canvas>
+                    </div>
+                    <div class='col-lg-6'>
+                        <canvas class='humidity-chart'></canvas>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-lg-6">
-                    <canvas class="airpressure-chart"></canvas>
+                <div class='row mt-4 row animate__delay-1s'>
+                    <div class='col-lg-6'>
+                        <canvas class='airpressure-chart'></canvas>
+                    </div>
+                    <div class='col-lg-6'>
+                        <canvas class='precipitation-chart'></canvas>
+                    </div>
                 </div>
-                <div class="col-lg-6">
-                    <canvas class="precipitation-chart"></canvas>
-                </div>
-            </div>
-        </section>
+            </section>";
+} else {
+    echo '<section class="loader-wrapper">
+        <div class="loader"></div>
+    </section>';
+}
+?>
 
     </main>
 
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         if (window.location.href.indexOf("year") === -1) {
@@ -161,6 +155,15 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
             aTag.remove();
         }
     });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script>
 
     const labels = [<?php while ($row = $result->fetch_assoc()) {echo '"' . date_format(date_create($row["record_date"]), "j M") . '",';}?>];
     <?php mysqli_data_seek($result, 0);?>
@@ -201,7 +204,8 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        fontColor: "white"
+                        fontColor: "white",
+                        stepSize: 15
                     },
                     labelString: "Temperature",
                     gridLines: {
@@ -249,7 +253,8 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        fontColor: "white"
+                        fontColor: "white",
+                        stepSize: 15
                     },
                     labelString: "Temperature",
                     gridLines: {
@@ -279,7 +284,6 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
                 borderColor: '#50759F',
                 backgroundColor: "#e5e5e5",
                 borderWidth: 2,
-
             }]
         },
         options: {
@@ -297,7 +301,8 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        fontColor: "white"
+                        fontColor: "white",
+                        stepSize: 200
                     },
                     labelString: "Temperature",
                     gridLines: {
@@ -346,7 +351,7 @@ if (isset($_GET["year"]) && array_key_exists('show', $_POST)) {
                     ticks: {
                         beginAtZero: true,
                         fontColor: "white",
-                        stepSize: 10
+                        stepSize: 15
                     },
                     labelString: "Temperature",
                     gridLines: {
