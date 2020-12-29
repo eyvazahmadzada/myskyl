@@ -106,29 +106,29 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                             <div class="col-sm-6">
                                 <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="temperature"
-                                        placeholder="Temperature in celsius">
+                                        placeholder="Temperature in celsius" required>
                                 </div>
                                 <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="airpressure"
-                                        placeholder="Air pressure in hPa">
+                                        placeholder="Air pressure in hPa" required>
                                 </div>
                                 <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="visibility_km"
-                                        placeholder="Visibility percentage">
+                                        placeholder="Visibility percentage" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="humidity_percent"
-                                        placeholder="Humidity percentage">
+                                        placeholder="Humidity percentage" required>
                                 </div>
                                 <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="precipitation"
-                                        placeholder="Precipitation percentage">
+                                        placeholder="Precipitation percentage" required>
                                 </div>
                                 <div class="form-group animate__animated animate__fadeInLeft">
                                     <input type="text" class="form-control" name="cloudcover"
-                                        placeholder="Cloud cover percentage">
+                                        placeholder="Cloud cover percentage" required>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                         <div class="row justify-content-center">
                             <div class="col-sm-6">
                                 <select name="weather-condition"
-                                    class="custom-select animate__animated animate__fadeInLeft">
+                                    class="custom-select animate__animated animate__fadeInLeft" required>
                                     <option>How is the weather?</option>
                                     <option value="1">Cold</option>
                                     <option value="2">Mild</option>
@@ -146,7 +146,8 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                     <option value="4">Sunny</option>
                                     <option value="5">Chilly</option>
                                 </select>
-                                <select name="humidity" class="custom-select animate__animated animate__fadeInLeft">
+                                <select name="humidity" class="custom-select animate__animated animate__fadeInLeft"
+                                    required>
                                     <option>How humid the weather is?</option>
                                     <option value="1">Wet</option>
                                     <option value="2">Dry</option>
@@ -156,7 +157,8 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select name="wind" class="custom-select animate__animated animate__fadeInLeft">
+                                <select name="wind" class="custom-select animate__animated animate__fadeInLeft"
+                                    required>
                                     <option>How windy the weather is?</option>
                                     <option value="1">Windy</option>
                                     <option value="2">Breezy</option>
@@ -164,7 +166,8 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                     <option value="4">Gusty</option>
                                     <option value="5">Blowy</option>
                                 </select>
-                                <select name="visibility" class="custom-select animate__animated animate__fadeInLeft">
+                                <select name="visibility" class="custom-select animate__animated animate__fadeInLeft"
+                                    required>
                                     <option>How visible the weather is?</option>
                                     <option value="1">Clear</option>
                                     <option value="2">Conspicuous</option>
@@ -174,7 +177,7 @@ if (array_key_exists('add-row', $_POST) && isset($_POST["temperature"])
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select name="fog" class="custom-select animate__animated animate__fadeInLeft">
+                                <select name="fog" class="custom-select animate__animated animate__fadeInLeft" required>
                                     <option>How foggy the weather is?</option>
                                     <option value="1">Hazy</option>
                                     <option value="2">Misty</option>
