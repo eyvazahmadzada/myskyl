@@ -74,7 +74,7 @@ if (isset($_GET["year"])) {
     <main class="container-fluid">
 
         <?php
-if (!$isLoading && $result->num_rows > 0) {
+if (!$isLoading) {
     echo
         '<section class="row justify-content-center' . (!$isLoading ? ' animate__animated animate__bounceInDown' : '') . '">
             <div class="header col-md-12 col-11">
