@@ -1,1 +1,1 @@
-# myskyl
+# MySKYL - Weather application
